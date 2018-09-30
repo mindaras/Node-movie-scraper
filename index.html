@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+  <head>
+      <style>
+          ul {
+              display: flex;
+              flex-wrap: wrap;
+          }
+          li {
+              width: 25%;
+              display: flex;
+          }
+          .content {
+              margin-left: 20px;
+          }
+          a {
+              display: block;
+              margin-top: 10px;
+          }
+      </style>
+  </head>
+  <body>
+    <ul id="list"></ul>
+  </body>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+      const socket = io();
+      const list = document.getElementById('list');
+      const template = '<li><img src="%src%" /><div class="content"><h3>%title%</h3><div>%info%</div><a href="%href%" target="_blank"/>More</a></div></li>'
+      socket.on('loaded', movie => {
+          let newTemplate = template;
+          let info = '';
+          movie.info.forEach(inf => info += `<div>${inf}</div>`);
+          newTemplate = newTemplate.replace("%src%", movie.img);
+          newTemplate = newTemplate.replace("%title%", movie.title);
+          newTemplate = newTemplate.replace("%href%", movie.url);
+          newTemplate = newTemplate.replace("%info%", info);
+          list.insertAdjacentHTML('beforeend', newTemplate);
+      });
+  </script>
+</html>
