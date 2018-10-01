@@ -20,13 +20,30 @@
       </style>
   </head>
   <body>
+    <form id="form">
+        <label>Imdb</label>
+        <input name="rating" type="text" value="7" required>
+        <label>Language</label>
+        <select name="language">
+            <option value="">None</option>
+            <option value="Lietuvių">Lietuvių</option>
+            <option value="Lietuviški titrai">Lietuviški titrai</option>
+            <option value="Anglų">Anglų</option>
+        </select>
+        <label>Year ></label>
+        <input name="year" type="number">
+        <label>Page count</label>
+        <input name="pageCount" type="number" value="10" required>
+        <input type="submit">
+    </form>
     <ul id="list"></ul>
   </body>
   <script src="/socket.io/socket.io.js"></script>
   <script>
       const socket = io();
+      const form = document.getElementById('form');
       const list = document.getElementById('list');
-      const template = '<li><img src="%src%" /><div class="content"><h3>%title%</h3><div>%info%</div><a href="%href%" target="_blank"/>More</a></div></li>'
+      const template = '<li><img src="%src%" /><div class="content"><h3>%title%</h3><div>%info%</div><a href="%href%" target="_blank"/>More</a></div></li>';
       socket.on('loaded', movie => {
           let newTemplate = template;
           let info = '';
@@ -37,5 +54,18 @@
           newTemplate = newTemplate.replace("%info%", info);
           list.insertAdjacentHTML('beforeend', newTemplate);
       });
+      form.onsubmit = e => {
+          e.preventDefault();
+          const data = {
+              pageCount: document.querySelector('input[name="pageCount"]').value,
+              rating: document.querySelector('input[name="rating"]').value,
+              language: document.querySelector('select[name="language"]').value,
+              year: document.querySelector('input[name="year"]').value
+          }
+          socket.emit('filter', data);
+      }
+      socket.on('reset', () => {
+          document.getElementById('list').innerHTML = '';
+      })
   </script>
 </html>
