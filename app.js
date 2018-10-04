@@ -53,14 +53,13 @@ const parseContent = (url, { rating = 7, language, year }) => {
         ) >= parseFloat(rating) &&
         (language
           ? data.info.some(inf => {
-              return inf.trim() === language.trim();
+              return inf.trim() === language;
             })
           : true) &&
         (year
           ? data.info.some(inf => parseInt(inf, 10) >= parseInt(year, 10))
           : true)
       ) {
-        language ? data.info.some(inf => inf.trim() === language.trim()) : true;
         io.emit("loaded", data);
       }
     }
